@@ -10,6 +10,22 @@ CONNECTIONS_FILE="$HOME/.snowflake/connections.toml"
 echo "=== Use Case Prep Skill Setup ==="
 echo ""
 
+SF_USER="${SNOWFLAKE_USER:-}"
+if [ -z "$SF_USER" ] && [ -f "$CONNECTIONS_FILE" ]; then
+    SF_USER=$(grep -A5 '^\[' "$CONNECTIONS_FILE" | grep -m1 'user\s*=' | sed 's/.*=\s*"//;s/".*//')
+fi
+if [ -z "$SF_USER" ]; then
+    printf "Enter your Snowflake username (e.g. JSMITH): "
+    read SF_USER
+fi
+if [ -z "$SF_USER" ]; then
+    echo "ERROR: Snowflake username is required."
+    exit 1
+fi
+SF_USER=$(echo "$SF_USER" | tr '[:lower:]' '[:upper:]')
+echo "  Using Snowflake user: $SF_USER"
+echo ""
+
 # Step 1: Create skill directory and copy SKILL.md
 echo "[1/3] Installing skill..."
 mkdir -p "$SKILL_DIR"
@@ -219,30 +235,30 @@ echo "[2/3] Configuring Snowflake connection..."
 if [ ! -f "$CONNECTIONS_FILE" ]; then
     echo "  Creating $CONNECTIONS_FILE..."
     mkdir -p "$(dirname "$CONNECTIONS_FILE")"
-    cat > "$CONNECTIONS_FILE" << 'CONN_EOF'
+    cat > "$CONNECTIONS_FILE" <<CONN_EOF
 [sales-enablement]
 account = "SFCOGSOPS-SNOWHOUSE_AWS_US_WEST_2"
+user = "$SF_USER"
 authenticator = "externalbrowser"
 role = "SALES_ENABLEMENT_RO_RL"
 warehouse = "ENABLEMENT_WH"
 database = "SALES"
 CONN_EOF
-    echo "  Created with sales-enablement connection."
-    echo "  NOTE: Edit $CONNECTIONS_FILE and add your 'user = \"YOUR_USERNAME\"' to the [sales-enablement] section."
+    echo "  Created with sales-enablement connection for $SF_USER."
 elif grep -q '\[sales-enablement\]' "$CONNECTIONS_FILE"; then
     echo "  Connection [sales-enablement] already exists. Skipping."
 else
-    cat >> "$CONNECTIONS_FILE" << 'CONN_EOF'
+    cat >> "$CONNECTIONS_FILE" <<CONN_EOF
 
 [sales-enablement]
 account = "SFCOGSOPS-SNOWHOUSE_AWS_US_WEST_2"
+user = "$SF_USER"
 authenticator = "externalbrowser"
 role = "SALES_ENABLEMENT_RO_RL"
 warehouse = "ENABLEMENT_WH"
 database = "SALES"
 CONN_EOF
-    echo "  Appended [sales-enablement] connection."
-    echo "  NOTE: Edit $CONNECTIONS_FILE and add your 'user = \"YOUR_USERNAME\"' to the [sales-enablement] section."
+    echo "  Appended [sales-enablement] connection for $SF_USER."
 fi
 
 # Step 3: Verify
@@ -264,12 +280,9 @@ fi
 echo ""
 echo "=== Setup Complete ==="
 echo ""
-echo "NEXT STEPS:"
-echo "  1. Ensure 'user = \"YOUR_USERNAME\"' is set in the [sales-enablement] section of:"
-echo "     $CONNECTIONS_FILE"
+echo "You're all set, $SF_USER! Open Cortex Code and type:"
 echo ""
-echo "  2. Verify you have the SALES_ENABLEMENT_RO_RL role granted to your user."
-echo "     Run in Snowflake: SHOW GRANTS TO USER <YOUR_USERNAME>;"
+echo "  prep me for a call with [account name]"
 echo ""
-echo "  3. Open Cortex Code and try: 'prep me for a call with [account name]'"
-echo ""
+echo "If the skill can't connect, verify you have the SALES_ENABLEMENT_RO_RL role."
+echo "Ask your manager or Lillie Grisko if you need access."
