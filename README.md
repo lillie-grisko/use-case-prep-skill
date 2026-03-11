@@ -1,36 +1,24 @@
 # Use Case Prep — Cortex Code Skill
 
-A Cortex Code skill that helps sellers prepare for customer conversations by combining account data, use case catalogs, customer stories, competitive intel, and Snowflake documentation into a ready-to-use conversation brief.
+A Cortex Code skill that helps sellers prepare for customer conversations by combining A360 workload intelligence, use case catalogs, customer stories, competitive intel, and Snowflake documentation into a ready-to-use conversation brief.
 
-## Install
+## Quick Install
 
-```bash
-git clone https://github.com/lillie-grisko/use-case-prep-skill.git
-bash use-case-prep-skill/setup-use-case-prep.sh
-```
+Paste this into Cortex Code Desktop chat:
 
-Or download just the setup script and run:
+> Run this command: `curl -sL https://raw.githubusercontent.com/lillie-grisko/use-case-prep-skill/main/setup-use-case-prep.sh | bash`
 
-```bash
-bash setup-use-case-prep.sh
-```
+It will ask for your Snowflake username, install the skill, and configure the connection automatically. No other steps required.
 
-The script will:
+## What It Does
 
-1. Install the skill to `~/.snowflake/cortex/skills/use-case-prep/SKILL.md`
-2. Add the `sales-enablement` connection to your `~/.snowflake/connections.toml` (or skip if it exists)
-3. Remind you to set your `user` and verify you have `SALES_ENABLEMENT_RO_RL` granted
+Uses the `SALES_BASIC_RO` role (available to all AEs and SEs) to access:
 
-## Post-Install
-
-1. Open `~/.snowflake/connections.toml` and add your Snowflake username to the `[sales-enablement]` section:
-   ```toml
-   user = "YOUR_USERNAME"
-   ```
-2. Verify you have the `SALES_ENABLEMENT_RO_RL` role. If unsure, ask your manager or run in Snowflake:
-   ```sql
-   SHOW GRANTS TO USER YOUR_USERNAME;
-   ```
+- **A360 Workload Classification** — what customers are running and where whitespace exists
+- **Use Case Catalogs** — 53 topics across 10 industries with business impact descriptions
+- **Customer Stories** — MEDDPICC-aligned proof points (pain, metrics, competitors, solution, results)
+- **Competitive Intel** — account-level and deal-level competitor signals
+- **Snowflake Docs** — live product capability research from docs.snowflake.com
 
 ## Usage
 
@@ -38,10 +26,24 @@ Open Cortex Code and type:
 
 > prep me for a call with Acme Corp
 
-The skill will walk you through a 5-step workflow:
+The skill walks you through 5 steps:
 
-1. **Account Lookup** — pull recommended use cases from A360
-2. **Use Case Details** — fetch technical details from the use case catalog
+1. **Account Lookup & A360 Intelligence** — find the account, pull workload classification and whitespace data
+2. **Use Case Details** — fetch recommended use cases cross-referenced with actual workload data
 3. **Customer Stories & Competitor Intel** — find real customer wins and competitive positioning
 4. **Snowflake Docs Research** — research product capabilities from Snowflake documentation
-5. **Conversation Prep Brief** — generate a structured brief with talk tracks
+5. **Conversation Prep Brief** — generate a 7-section brief with talk tracks and discovery questions
+
+## Your Brief Includes
+
+- Account snapshot with A360 workload profile
+- Workload intelligence and whitespace opportunities
+- Recommended use case focus (expansion vs new opportunity)
+- Snowflake solution overview in business-friendly language
+- Customer proof points (Problem → Solution → Result)
+- Competitive landscape and differentiators
+- Tailored talk track, discovery questions, and objection handling
+
+## Need Help?
+
+Contact Lillie Grisko for access issues or skill feedback.
